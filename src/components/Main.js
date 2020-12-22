@@ -196,7 +196,7 @@ class Main extends Component {
     optionsA = (this.state.selA !== "-1") && this.data.map((ele) => ele.name)
 
     getOptionsB() {
-        this.state.selA !== "-1" && (this.state.setState({
+        (this.state.selA !== "-1") && (this.state.setState({
             optionsB: this.data[this.state.selA].gruppe.map((ele) => ele.name),
             selB: "-1"  
         }))
@@ -254,7 +254,7 @@ class Main extends Component {
                     <Select valueA={this.state.selA} valueB={this.state.selB} optionsA={this.optionsA} optionsB={this.state.OptionsB} changeA={this.setselA} changeB={this.setselB}/>
                     <Switch>
                         <Route path="/shop" exact render={() => 
-                        (<Table data={this.state.data[this.state.selA].gruppe[this.state.selB].artikel} clickFunction={this.addToCart} clickText={"Hinzufügen"} />
+                        (<Table data={this.data[this.state.selA].gruppe[this.state.selB].artikel} clickFunction={this.addToCart} clickText={"Hinzufügen"} />
                         )}/>
                         <Route path="/cart" exact render={() => 
                         (<Cart cart={this.state.cart} clickFunction={this.removeFromCart} clickText={"Entfernen"}/>
