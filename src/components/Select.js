@@ -1,6 +1,7 @@
 import React from 'react';
 
 function Select({valueA, valueB, optionsA, optionsB, changeA, changeB}) {
+
     return (
         <>
             <h2>Willkommen zum Shop!</h2>

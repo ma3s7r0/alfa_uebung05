@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter, NavLink, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, NavLink, Route} from 'react-router-dom';
 import Cart from './Cart';
 import Select from './Select';
 import Table from './Table';
@@ -10,17 +10,12 @@ class Main extends Component {
         super(props);
 
         this.state = {
-            cart: [],
             selA: "-1",
             selB: "-1",
-            optionsB: []
+            optionsA: this.data.map((ele) => ele.name),
+            optionsB: [],
+            cart: []
         }
-        
-        this.getOptionsB = this.getOptionsB.bind(this)
-        this.setSelA = this.setselA.bind(this)
-        this.setSelB = this.setselB.bind(this)
-        this.addToCart = this.addToCart.bind(this)
-        this.removeFromCart = this.removeFromCart.bind(this)
     }
 
     data = [
@@ -193,23 +188,21 @@ class Main extends Component {
         }
     ]
 
-    optionsA = (this.state.selA !== "-1") && this.data.map((ele) => ele.name)
-
-    getOptionsB() {
-        (this.state.selA !== "-1") && (this.state.setState({
+    setOptionsB = () => {
+        (this.state.selA !== "-1") && (this.setState({
             optionsB: this.data[this.state.selA].gruppe.map((ele) => ele.name),
-            selB: "-1"  
         }))
-    }   
-
-    setSelA(event) {
-        this.state.setState({
-            selA: event.target.value
-        }, this.getOptionsB())
+        this.setState({selB: "-1"})
     }
-    
-    setSelB(event) {
-        this.state.setState({
+
+    setSelA = (event) => {
+        this.setState({
+            selA: event.target.value
+        }, this.setOptionsB)
+    }
+
+    setSelB = (event) => {
+        this.setState({
             selB: event.target.value
         })
     }
@@ -217,50 +210,57 @@ class Main extends Component {
 
 
     /* adds an item to the cart */
-    addToCart(index) {
-        let item = this.products[this.state.category].items[index]
+    addToCart = (index) => {
+        let item = this.data[this.state.selA].gruppe[this.state.selB].artikel[index]
         let newCart = [...this.state.cart]
         newCart.push({
-            'Name': item.Titel,
-            'Preis': item.Preis
+            'Name': item.titel,
+            'Preis': item.preis
         })
         this.setState({
             cart: newCart
         })
-
     }
 
     /* removes an item from the cart array by the index*/
-    removeFromCart(index) {
+    removeFromCart = (index) => {
         let newCart = [...this.state.cart]
         newCart.splice(index, 1)
         this.setState({
-            cart: newCart
+            cart: [...newCart]
         })
     }
 
     render() {
-        //console.log(`state:${this.state}`)
+        let s = this.state
         return (
             <BrowserRouter>
-                <header>
-                    <h1>Bücher und Mehr</h1>
-                </header>
-                <nav className="clearfix">
-                    <NavLink to="/shop"><div>Shop</div></NavLink>
-                    <NavLink to="/cart"><div>Warenkorb ({this.state.cart.length})</div></NavLink>
-                </nav>
-                <main>
-                    <Select valueA={this.state.selA} valueB={this.state.selB} optionsA={this.optionsA} optionsB={this.state.OptionsB} changeA={this.setselA} changeB={this.setselB}/>
-                    <Switch>
-                        <Route path="/shop" exact render={() => 
-                        (<Table data={this.data[this.state.selA].gruppe[this.state.selB].artikel} clickFunction={this.addToCart} clickText={"Hinzufügen"} />
-                        )}/>
-                        <Route path="/cart" exact render={() => 
-                        (<Cart cart={this.state.cart} clickFunction={this.removeFromCart} clickText={"Entfernen"}/>
-                        )}/>
-                    </Switch>
-                </main>
+                <>
+                    <header>
+                        <h1>Bücher und Mehr</h1>
+                    </header>
+                    <nav className="clearfix">
+                        <NavLink to="/shop"><div>Shop</div></NavLink>
+                        <NavLink to="/cart"><div>Warenkorb ({s.cart.length})</div></NavLink>
+                    </nav>
+                    <main>
+                        <Route path="/shop" exact render={() => (<Select    valueA={s.selA} 
+                                                                            valueB={s.selB}
+                                                                            optionsA={s.optionsA} 
+                                                                            optionsB={s.optionsB} 
+                                                                            changeA={this.setSelA} 
+                                                                            changeB={this.setSelB} />)} />
+                        {(s.selA !== "-1" && s.selB !== "-1") &&
+                            <Route path="/shop" exact render={() => (
+                               <Table   data={this.data[s.selA].gruppe[s.selB].artikel} 
+                                        clickFunction={this.addToCart} 
+                                        clickText={"Hinzufügen"} />
+                            )} />}
+                        <Route path="/cart" exact render={() => (
+                            <Cart cart={s.cart} clickFunction={this.removeFromCart} clickText={"Entfernen"} />
+                        )} />
+                    </main>
+                </>
             </BrowserRouter>
         );
     }

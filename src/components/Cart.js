@@ -4,24 +4,9 @@ import Table from './Table';
 function Cart({cart, clickFunction, clickText}) {
     return (
         <>
-
+            <h2>Warenkorb</h2>
             {cart.length !== 0 && <Table data={cart} clickFunction={clickFunction} clickText={clickText}/>}
-            {cart.length === 0 && <p>Der Warenkorb ist leer.</p>}
-        
-{/*             <h2>Warenkorb</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Titel</th>
-                        <th>Preis</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table> */}
-
-            
+            {cart.length === 0 && <p>Der Warenkorb ist leer.</p>}          
         </>
     );
 }
